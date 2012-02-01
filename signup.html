@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>Learn the Knock</title>
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -16,13 +16,18 @@
     <style type="text/css">
       /* Override some defaults */
       html, body {
-        background-color: #eee;
+        background-color: #070707;
+      }
+      a {
+      margin: 0px;
+      border: 0px;
+      padding: 0px;
       }
       body {
         padding-top: 40px; /* 40px to make the container go all the way to the bottom of the topbar */
       }
       .container > footer p {
-        text-align: center; /* center align it with the container */
+      
       }
       .container {
         width: 820px; /* downsize our container to make the content feel a bit tighter and more cohesive. NOTE: this removes two full columns from the grid, meaning you only go to 14 columns and not 16. */
@@ -30,7 +35,7 @@
 
       /* The white background content wrapper */
       .content {
-        background-color: #fff;
+        background-color: #070707;
         padding: 20px;
         margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
         -webkit-border-radius: 0 0 6px 6px;
@@ -67,78 +72,51 @@
     </style>
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="shortcut icon" href="images/favicon.ico">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
     <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+    <script src="/static/bootstrap-modal.js" type="text/javascript"></script>
   </head>
 
   <body>
-
-    <div class="topbar">
-      <div class="fill">
-        <div class="container">
-          <a class="brand" href="#">cleanbook</a>
-          <ul class="nav">
-            <li class="active"><a href="#">Dwelling</a></li>
-            <li><a href="#photos">Photos</a></li>
-            <li><a href="#musings">Musings</a></li>
-            <li><a href="#flair">Flair</a></li>
-          </ul>
-          <form action="" class="pull-right">
-            <input class="input-small" type="text" placeholder="Username">
-            <input class="input-small" type="password" placeholder="Password">
-            <button class="btn" type="submit">Sign in</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
     <div class="container">
-
-      <div class="content">
-        <div class="page-header">
-          <h1>{{ node }} <small>Supporting text or tagline</small></h1>
+      
+      <a class="btn"
+         data-controls-modal="modal-from-dom"
+         data-backdrop="static" >
+        
+        <img src="/static/starman.jpg"></img>
+      </a>
+      <div id="modal-from-dom" class="modal hide fade">
+        <div class="modal-header">
+          <a href="#" class="close">&times;</a>
+          <h3>Knock Knock</h3>
         </div>
-        <div class="row">
-          <div class="span10">
-            <h2>echo chamber</h2>
-          </div>
-          <div class="span4">
-            <h3>friends</h3>
-            <ul class="media-grid">
-              {% for friend in friends %}
-              <li>
-                <a href="/{{friend}}">
-                  <img class="thumbnail" src="http://placekitten.com/g/90/90" alt="">
-                  {{ friend }}
-                </a>
-              </li>
-              {% end %}
-            </ul>
-          </div>
+        <div class="modal-body">
+          <html><body><form class="form-stacked" action="/approach-the-door" method="post" id="logindoor">
+                <label for="callsign">Username</label>
+                <input type="text" name="callsign">
+                <label for="password">Password</label>
+                <input type="password" name="password">
+                <input type="submit" value="Submit">
+          </form></body></html>                
+        </div>
+        <script>
+          $('#submit-login').click(function() {
+          $('#logindoor').submit();
+          });
+        </script>
+        <div class="modal-footer">
+          <a href="#" class="btn primary" id="submit-login">Primary</a>
+          <a href="#" class="btn secondary">Secondary</a>
         </div>
       </div>
-
       <footer>
-        <p>&copy; Company 2011</p>
+        Image Attribution: Chris Halderman
       </footer>
-
     </div> <!-- /container -->
-
   </body>
 </html>
-<!--
-<html>
-   <head>
-      <title></title>
-   </head>
-   <body>
-     <ul>
-       {% for item in items %}
-         <li>{{ escape(item) }}</li>
-       {% end %}
-     </ul>
-   </body>
- </html>
--->

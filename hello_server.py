@@ -42,15 +42,33 @@ class MainHandler(BaseHandler):
 class Login(BaseHandler):
     def get(self):
         self.render("login.html")
-        self.next_page = self.get_argument("next")
         
     def post(self):
         self.set_header("Content-Type", "text/html")
         username = self.get_argument("callsign")
         password = self.get_argument("password")
-        if password == 'a':
+        if s.check_password(username, password):
             self.set_secure_cookie("user", username)
             self.redirect("/" + username)
+        else:
+             self.redirect("/approach-the-door")
+
+class SignUp(BaseHandler):
+    def get(self):
+        self.render("signup.html")
+
+    def post(self):
+        self.set_header("Content-Type", "text/html")
+        username = self.get_argument("callsign")
+        password = self.get_argument("password")
+        email = self.get_argument("email")
+        resp = s.create_account(self, username, password) == 'name taken'
+        if resp == 'name taken':
+            self.redirect("/learn-the-knock")
+        elif resp == 'account created':
+            self.set_secure_cookie("user", username)
+        else:
+            "error"
 
 settings = {
     "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
@@ -61,6 +79,7 @@ print settings['static_path']
 application = tornado.web.Application([
     (r"/([a-z]+)", MainHandler),
     (r"/approach-the-door", Login),
+    (r"/learn-the-knock", SignUp),
 ], **settings)
 
 if __name__ == "__main__":

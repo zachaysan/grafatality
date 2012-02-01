@@ -1,16 +1,24 @@
 from grafatality import Grafatality
 from pprint import pprint
 import commands
+import bcrypt
 
 class SocialNetwork(object):
     def __init__(self, filename='social_network.js'):
         self.g = Grafatality(filename)
 
-    def create_account(self, username):
+    def create_account(self, username, password, email):
         if username in self.g.graph.node:
             return "name taken"
         else:
-            self.g.add_node(username)
+            password_hash = bcrypt.hashpw((password + username + "saltybaconi$fantastic"), bcrypt.gensalt(5))
+            self.g.add_node(username, password_hash=password_hash, email=email)
+            return "account created"
+
+    def check_password(self, username, password):
+        password_hash = self.g.graph.node[username]['password_hash']
+        return bcrypt.hashpw(password + username + "saltybaconi$fantastic",
+                             password_hash) == password_hash
     
     def list_friends(self, node):
         print node
