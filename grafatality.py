@@ -5,14 +5,13 @@ from networkx import MultiDiGraph
 class Grafatality(object):
     def __init__(self, filename='graph.json'):
         self.filename=filename
-        self.log = open(self.filename, 'a')
-        self.appended_record_count = 0
         self.graph = MultiDiGraph()
         try:
             self.load_file(filename)
         except:
             pass
-        #self.log = open('log2.js', 'a')
+
+        self.log = open(self.filename, 'a')
         
     def handle(self, line):
         obj = ujson.loads(line)
@@ -52,7 +51,8 @@ class Grafatality(object):
     def add_node(self, node, **attr):
         data = {"action": "add_node",
                 "node": node}
-        if len(attr): data['data'] = attr
+        if len(attr):
+            data['data'] = attr
         self.append_log(data)
 
         return self.graph.add_node(node, **attr)
@@ -61,8 +61,10 @@ class Grafatality(object):
         data = {"action": "add_edge",
                 "src_node": src_node,
                 "dst_node": dst_node}
-        if len(attr): data['data'] = attr
-        if key: data['key'] = key
+        if len(attr):
+            data['data'] = attr
+        if key:
+            data['key'] = key
         self.append_log(data)
         
         return self.graph.add_edge(src_node, dst_node, key=key, **attr)
@@ -79,15 +81,20 @@ class Grafatality(object):
     def append_log(self,data):
         self.log.write(ujson.encode(data))
         self.log.write("\n")
-        print '-----------'
-        pprint(data)
-        print '-----------'
-        
-if __name__ == '__main__':
-    print ujson.__dict__
+
+    def shutdown(self):
+        self.log.close()
+
+
+def main():
+    """ Useful only for testing the speed at which grafatality can write """
     g = Grafatality('test.js')
-    pprint(g.graph.__dict__)
     foo = {"something": "important", "for": ["a","r","r","a","y","s"]}
+
+    # This should take no more than 2 seconds
     for i in range(1000000):
         g.append_log(foo)
-    g.log.close()
+    g.shutdown()
+
+if __name__ == '__main__':
+    main()
