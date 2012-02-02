@@ -113,7 +113,7 @@
 <br>
               <button class="btn" type="submit">never stop musing</button>
             </form>
-
+            {% if musings %}
             {% for musing in musings %}
             <div>
               <h4>{{ escape(musing['title']) }}</h4>
@@ -121,6 +121,7 @@
                 <pre><p>{{ escape(musing['body']) }}</p></pre>
               {% end %}
             </div>
+            {% end %}
             {% end %}
           </div>
           <div class="span4">
