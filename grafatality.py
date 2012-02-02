@@ -4,13 +4,15 @@ from networkx import MultiDiGraph
 
 class Grafatality(object):
     def __init__(self, filename='graph.json'):
+        self.filename=filename
+        self.log = open(self.filename, 'a')
+        self.appended_record_count = 0
         self.graph = MultiDiGraph()
         try:
             self.load_file(filename)
         except:
             pass
         #self.log = open('log2.js', 'a')
-        self.log = open(filename, 'a')
         
     def handle(self, line):
         obj = ujson.loads(line)
@@ -77,11 +79,15 @@ class Grafatality(object):
     def append_log(self,data):
         self.log.write(ujson.encode(data))
         self.log.write("\n")
+        print '-----------'
+        pprint(data)
+        print '-----------'
         
-
 if __name__ == '__main__':
     print ujson.__dict__
-    g = Grafatality('actions.js')
-    pprint(g.graph.__dict__)    
-
+    g = Grafatality('test.js')
+    pprint(g.graph.__dict__)
+    foo = {"something": "important", "for": ["a","r","r","a","y","s"]}
+    for i in range(1000000):
+        g.append_log(foo)
     g.log.close()

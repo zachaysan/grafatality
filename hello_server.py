@@ -4,40 +4,48 @@ from grafatality import Grafatality
 from simulated_social_interaction import SSI
 import os
 from pprint import pprint
+
+
 s = SSI().s
 
-graf = Grafatality('actions.js')
 
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
 
 class MainHandler(BaseHandler):
-
     def get(self,node):
-#        self.write("hello")
-#        self.write('<html><body><form action="/" method="post">'
-#                   '<input type="text" name="message">'
-#                   '<input type="submit" value="Submit">'
-#                   '</form></body></html>')
-        
-
         if not self.current_user:
             self.redirect("/approach-the-door")
             return
-
-        items = ["Item 1", "Item 2", "Item 3"]
         friends = s.list_friends(node)
-        self.render("template.html", node=node, items=items,
-                    friends=friends)
+        friend_requesters = s.list_friend_req(node)
+        self.render("template.html", node=node,
+                    friends=friends,
+                    friend_requesters=friend_requesters)
         
 
-    def post(self):
+    def post(self,node):
         self.set_header("Content-Type", "text/html")
-        #self.write("You wrote " + self.get_argument("message"))
-        self.write('friends: <br \>')
-        for friend in s.list_friends(self.get_argument("message")):
-            self.write(friend + '<br \>')
+        friend_request = self.get_argument("friend-request")
+        s.request_friend(node,friend_request)
+        self.redirect("/" + node)
+
+class MusingHandler(BaseHandler):
+    def get(self,node):
+        if not self.current_user:
+            self.redirect("/approach-the-door")
+            return
+        musings = s.list_musings(node)
+        self.render("musings.html", node=node, musings=musings)
+        
+    def post(self,node):
+        self.set_header("Content-Type", "text/html")
+        title = self.get_argument("title")
+        body = self.get_argument("body")
+        s.add_musing(node=node, title=title, body=body)
+        self.redirect("/musings/" + node)
+        
             
 class Login(BaseHandler):
     def get(self):
@@ -47,7 +55,9 @@ class Login(BaseHandler):
         self.set_header("Content-Type", "text/html")
         username = self.get_argument("callsign")
         password = self.get_argument("password")
-        if s.check_password(username, password):
+
+        resp = s.check_password(username, password)
+        if resp:
             self.set_secure_cookie("user", username)
             self.redirect("/" + username)
         else:
@@ -80,6 +90,7 @@ application = tornado.web.Application([
     (r"/([a-z]+)", MainHandler),
     (r"/approach-the-door", Login),
     (r"/learn-the-knock", SignUp),
+    (r"/musings/([a-z]+)", MusingHandler),
 ], **settings)
 
 if __name__ == "__main__":

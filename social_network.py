@@ -2,6 +2,7 @@ from grafatality import Grafatality
 from pprint import pprint
 import commands
 import bcrypt
+import time
 
 class SocialNetwork(object):
     def __init__(self, filename='social_network.js'):
@@ -32,6 +33,7 @@ class SocialNetwork(object):
         elif node1 in list(self.list_friend_req(node2)):
             return "you already requested being friends, creeper"
         self.g.add_edge(node2, node1, key='request_friend', exists=True)
+        return "requesting"
 
     def accept_friend_req(self, node1, node2):
         if 'request_friend' in self.g.graph[node1][node2]:
@@ -59,7 +61,24 @@ class SocialNetwork(object):
         if node1 not in list(self.list_friends(node2)):
             friend(node2, node1)
 
+    def add_musing(self, node, title, body=None):
+        previous_musings = self.g.graph.node[node].get('musings', [])
+        pprint(previous_musings)
+        timestamp = int(time.time())
+        if body:
+            record = dict(timestamp=timestamp,
+                          title=title,
+                          body=body)
+        else:
+            record = dict(timestamp=timestamp,
+                          title=title)
+        previous_musings.append(record)
+        # needed for log
+        self.g.add_node(node, musings=previous_musings)
 
+    def list_musings(self, node):
+        return self.g.graph.node[node].get('musings')
+        
 if __name__ == '__main__':
     s = SocialNetwork()
     pprint(s.g.graph.__dict__)

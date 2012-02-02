@@ -22,6 +22,7 @@ class SSI(object):
         s.request_friend("andrew", "zach")
         s.request_friend("andrew", "jaco")
         s.accept_friend_req("zach", "andrew")
+        s.add_musing("zach", title="What a beautiful world", body="I want to see more")
         self.s = s
 
 
