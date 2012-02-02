@@ -8,7 +8,6 @@ from pprint import pprint
 
 s = SSI().s
 
-
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
@@ -23,7 +22,6 @@ class MainHandler(BaseHandler):
         self.render("template.html", node=node,
                     friends=friends,
                     friend_requesters=friend_requesters)
-        
 
     def post(self,node):
         self.set_header("Content-Type", "text/html")
@@ -45,7 +43,6 @@ class MusingHandler(BaseHandler):
         body = self.get_argument("body")
         s.add_musing(node=node, title=title, body=body)
         self.redirect("/musings/" + node)
-        
             
 class Login(BaseHandler):
     def get(self):
@@ -72,11 +69,12 @@ class SignUp(BaseHandler):
         username = self.get_argument("callsign")
         password = self.get_argument("password")
         email = self.get_argument("email")
-        resp = s.create_account(self, username, password) == 'name taken'
+        resp = s.create_account(username, password,email)
         if resp == 'name taken':
             self.redirect("/learn-the-knock")
         elif resp == 'account created':
             self.set_secure_cookie("user", username)
+            self.redirect("/" + username)
         else:
             "error"
 
@@ -85,7 +83,7 @@ settings = {
     "login_url": "/approach-the-door",
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
 }
-print settings['static_path']
+
 application = tornado.web.Application([
     (r"/([a-z]+)", MainHandler),
     (r"/approach-the-door", Login),
