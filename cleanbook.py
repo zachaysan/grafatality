@@ -1,10 +1,20 @@
 import tornado.ioloop
 import tornado.web
+from tornado.options import define, options, logging
 from grafatality import Grafatality
 from simulated_social_interaction import SSI
 import os
 from pprint import pprint
 
+define("port", default=8888, help="run on the given port", type=int)
+
+settings = {
+    "debug": True,
+}
+
+server_settings = {
+    "xheaders" : True,
+}
 
 s = SSI().s
 
@@ -91,6 +101,12 @@ application = tornado.web.Application([
     (r"/musings/([a-z]+)", MusingHandler),
 ], **settings)
 
-if __name__ == "__main__":
-    application.listen(8888)
+
+def main():
+    tornado.options.parse_command_line()
+    logging.info("Starting Tornado web server on http://localhost:%s" % options.port)
+    application.listen(options.port, **server_settings)
     tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == "__main__":
+    main()
