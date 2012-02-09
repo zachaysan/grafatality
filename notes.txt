@@ -1,3 +1,8 @@
+supervisord handles the tornado servers
+nginx handles traffic on port 7999 and delegates to the tornado servers
+to restart supervisord use supervisorctl with sudo if needed and type reload
+to restart nginx use the -s flag and add reload
+
 
 # supervisord runs fastmage and cleanbook
 # config:
