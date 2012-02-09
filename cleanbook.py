@@ -29,9 +29,10 @@ class MainHandler(BaseHandler):
             return
         friends = s.list_friends(node)
         friend_requesters = s.list_friend_req(node)
+        active = 'dwelling'
         self.render("template.html", node=node,
                     friends=friends,
-                    friend_requesters=friend_requesters)
+                    friend_requesters=friend_requesters, active=active)
 
     def post(self,node):
         self.set_header("Content-Type", "text/html")
@@ -39,13 +40,30 @@ class MainHandler(BaseHandler):
         s.request_friend(node,friend_request)
         self.redirect("/" + node)
 
+class PhotosHandler(BaseHandler):
+    def get(self,node):
+        if not self.current_user:
+            self.redirect("/approach-the-door")
+            return
+        photos = s.list_photos(node)
+        active = 'photos'
+        self.render("photos.html", node=node, photos=photos, active=active)
+        
+    def post(self,node):
+        self.set_header("Content-Type", "text/html")
+#        title = self.get_argument("title")
+ #       body = self.get_argument("body")
+  #      s.add_musing(node=node, title=title, body=body)
+        self.redirect("/photos/" + node)
+
 class MusingHandler(BaseHandler):
     def get(self,node):
         if not self.current_user:
             self.redirect("/approach-the-door")
             return
         musings = s.list_musings(node)
-        self.render("musings.html", node=node, musings=musings)
+        active = 'musings'
+        self.render("musings.html", node=node, musings=musings, active=active)
         
     def post(self,node):
         self.set_header("Content-Type", "text/html")
@@ -99,6 +117,7 @@ application = tornado.web.Application([
     (r"/approach-the-door", Login),
     (r"/learn-the-knock", SignUp),
     (r"/musings/([a-z]+)", MusingHandler),
+    (r"/photos/([a-z]+)", PhotosHandler),
 ], **settings)
 
 

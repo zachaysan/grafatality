@@ -78,6 +78,9 @@ class SocialNetwork(object):
 
     def list_musings(self, node):
         return self.g.graph.node[node].get('musings')
+
+    def list_photos(self, node):
+        return self.g.graph.node[node].get('photos')
         
 if __name__ == '__main__':
     s = SocialNetwork()
