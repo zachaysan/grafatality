@@ -46,6 +46,8 @@ class PhotosHandler(BaseHandler):
             self.redirect("/approach-the-door")
             return
         photos = s.list_photos(node)
+        if not photos:
+            photos = list()
         active = 'photos'
         self.render("photos.html", node=node, photos=photos, active=active)
         
