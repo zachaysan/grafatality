@@ -53,9 +53,8 @@ class PhotosHandler(BaseHandler):
         
     def post(self,node):
         self.set_header("Content-Type", "text/html")
-#        title = self.get_argument("title")
- #       body = self.get_argument("body")
-  #      s.add_musing(node=node, title=title, body=body)
+        image_link = self.get_argument("image_link")
+        
         self.redirect("/photos/" + node)
 
 class MusingHandler(BaseHandler):
@@ -107,6 +106,8 @@ class SignUp(BaseHandler):
             self.redirect("/" + username)
         else:
             "error"
+
+
 
 settings = {
     "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
