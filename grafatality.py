@@ -7,9 +7,11 @@ class Grafatality(object):
         self.filename=filename
         self.graph = MultiDiGraph()
         try:
+            print 'Attempting to file open "%s"' % filename
             self.load_file(filename)
-        except:
-            pass
+            print 'finished opening "%s"' % filename
+        except IOError as e:
+            print 'file "%s" does not exist, creating' % filename
 
         self.log = open(self.filename, 'a')
         
