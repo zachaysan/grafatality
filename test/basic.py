@@ -85,7 +85,12 @@ class BasicTest(unittest.TestCase):
         pass
 
     def test_node_typing(self):
-        pass
+        self.g.add_node('zach', node_type='person')
+        self.assertTrue('zach' in self.g.nodes_of_type('person', full=False))
 
     def test_retrival_of_nodes_of_a_certain_type(self):
+        g = Grafatality('other.js')
+        g.add_node(('zach', 'person'))
         pass
+
+    

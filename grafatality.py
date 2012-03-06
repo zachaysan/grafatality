@@ -6,6 +6,8 @@ class Grafatality(object):
     def __init__(self, filename='graph.json'):
         self.filename=filename
         self.graph = MultiDiGraph()
+        self.typed_nodes = {}
+        self.typed_nodes[None] = []
         try:
             self.load_file(filename)
         except IOError as e:
@@ -41,19 +43,41 @@ class Grafatality(object):
     
     def load_node(self, obj):
         data = obj.get('data', None)
+        node = obj['node']
+        node_type = None
+        if type(node) == list:
+            node = tuple(node)
+            if len(node) == 2:
+                node = node[0]
+                node_type = node[1]
         if data:
-            self.graph.add_node(obj['node'], **data)
+            self.graph.add_node(node, node_type=node_type, **data)
         else:
-            self.graph.add_node(obj['node'])
+            self.graph.add_node(node, node_type=node_type)
     
-    def add_node(self, node, **attr):
+    def add_node(self, node, node_type=None, **attr):
+        if node_type:
+            if not node_type in self.typed_nodes:
+                self.typed_nodes[node_type] = []
+            node = (node, node_type)
+            self.typed_nodes[node_type].append(node)
+        else:
+            self.typed_nodes[None].append(node)
+
         data = {"action": "add_node",
                 "node": node}
+
         if len(attr):
             data['data'] = attr
         self.append_log(data)
 
         return self.graph.add_node(node, **attr)
+
+    def nodes_of_type(self, node_type=None, full=True):
+        if full:
+            return self.typed_nodes[node_type]
+        else:
+            return self.typed_nodes[node_type][0]
 
     def add_edge(self, src_node, dst_node, key=None, **attr):
         data = {"action": "add_edge",
@@ -86,6 +110,7 @@ class Grafatality(object):
         self.log.write(ujson.encode(data))
         self.log.write("\n")
         self.log.close()
+
 
     def shutdown(self):
         self.log.close()
