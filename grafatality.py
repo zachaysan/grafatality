@@ -29,27 +29,34 @@ class Grafatality(object):
             self.handle(line)
         f.close()
 
+    def listify_typed_node(self, node):
+        if type(node) == list:
+            node = tuple(node)
+            if len(node) == 2:
+                node = tuple(node)
+        return node
+
     def load_edge(self, obj):
         data = obj.get('data', None)
         key =  obj.get('key', None)
+        src_node = obj['src_node']
+        dst_node = obj['dst_node']
+        src_node = self.listify_typed_node(src_node)
+        dst_node = self.listify_typed_node(dst_node)
         if data:
-            self.graph.add_edge(obj['src_node'], obj['dst_node'], key=key, **data)
+            self.graph.add_edge(src_node, dst_node, key=key, **data)
         else:
-            self.graph.add_edge(obj['src_node'], obj['dst_node'], key=key)
+            self.graph.add_edge(src_node, dst_node, key=key)
     
     def load_remove_edge(self, obj):
         key = obj.get('key', None)
         self.graph.remove_edge(obj['src_node'], obj['dst_node'], key=key)
-    
+        
     def load_node(self, obj):
         data = obj.get('data', None)
         node = obj['node']
         node_type = None
-        if type(node) == list:
-            node = tuple(node)
-            if len(node) == 2:
-                node = node[0]
-                node_type = node[1]
+        node = self.listify_typed_node(node)
         if data:
             self.graph.add_node(node, node_type=node_type, **data)
         else:
@@ -80,6 +87,7 @@ class Grafatality(object):
             return self.typed_nodes[node_type][0]
 
     def add_edge(self, src_node, dst_node, key=None, **attr):
+        
         data = {"action": "add_edge",
                 "src_node": src_node,
                 "dst_node": dst_node}

@@ -3,13 +3,24 @@ import unittest
 from grafatality import Grafatality
 
 class BasicTest(unittest.TestCase):
+    def delete_test_file(self, filename):
+        f = open(filename, 'w')
+        f.close()
+
+    def cat(self, filename):
+        f = open(filename)
+        for line in f.readlines():
+            print line
+        f.close
+
     def setUp(self):
-        def delete_test_file():
-            f = open('test.js', 'w')
-            f.close()
-        delete_test_file()
-        self.test_file = 'test.js'
-        self.g = Grafatality(self.test_file)
+        self.test_filename = 'test.js'
+        self.delete_test_file(self.test_filename)
+        self.g = Grafatality(self.test_filename)
+
+    def tearDown(self):
+        self.delete_test_file('test.js')
+        self.delete_test_file('other.js')
 
     def test_blow_up(self):
         """ it does not blow up on init """
@@ -90,7 +101,33 @@ class BasicTest(unittest.TestCase):
 
     def test_retrival_of_nodes_of_a_certain_type(self):
         g = Grafatality('other.js')
-        g.add_node(('zach', 'person'))
-        pass
+        g.add_node('zach', node_type='person')
+        self.assertTrue(('zach', 'person') in g.graph.node)
+        self.assertTrue(('zach', 'person') in g.nodes_of_type('person'))
 
-    
+    def test_edge_typing(self):
+        self.g.add_edge(('zach', 'person'), ('waterloo', 'university'), key='attended')
+        self.assertTrue(('waterloo', 'university') in self.g.graph[('zach', 'person')])
+        self.assertTrue('attended' in self.g.graph[('zach', 'person')][('waterloo', 'university')])
+        
+    def test_edge_typing_with_file_recall(self):
+        self.g.add_edge(('zach', 'person'), ('waterloo', 'university'), key='attended')
+        g = Grafatality('test.js')
+        self.assertTrue(('waterloo', 'university') in g.graph[('zach', 'person')])
+        self.assertTrue('attended' in g.graph[('zach', 'person')][('waterloo', 'university')])
+
+    def test_edge_typing_with_attributes(self):
+        self.g.add_edge(('ak47', 'gun'), ('russia','country'), key='origin', painful='yes')
+        self.assertTrue(('russia', 'country') in self.g.graph[('ak47','gun')])
+        self.assertTrue('origin' in self.g.graph[('ak47','gun')][('russia','country')])
+        self.assertTrue('painful' in self.g.graph[('ak47','gun')][('russia','country')]['origin'])
+        self.assertTrue('yes' == self.g.graph[('ak47','gun')][('russia','country')]['origin']['painful'])
+        
+        
+    def test_edge_typing_with_attributes_and_file_recal(self):
+        self.g.add_edge(('ak47', 'gun'), ('russia','country'), key='origin', painful='yes')
+        g = Grafatality('test.js')
+        self.assertTrue(('russia', 'country') in g.graph[('ak47','gun')])
+        self.assertTrue('origin' in g.graph[('ak47','gun')][('russia','country')])
+        self.assertTrue('painful' in g.graph[('ak47','gun')][('russia','country')]['origin'])
+        self.assertTrue('yes' == g.graph[('ak47','gun')][('russia','country')]['origin']['painful'])
