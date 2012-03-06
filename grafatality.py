@@ -7,13 +7,9 @@ class Grafatality(object):
         self.filename=filename
         self.graph = MultiDiGraph()
         try:
-            print 'Attempting to file open "%s"' % filename
             self.load_file(filename)
-            print 'finished opening "%s"' % filename
         except IOError as e:
             print 'file "%s" does not exist, creating' % filename
-
-        self.log = open(self.filename, 'a')
         
     def handle(self, line):
         obj = ujson.loads(line)
@@ -81,8 +77,15 @@ class Grafatality(object):
         return self.graph.remove_edge(src_node, dst_node, key)
 
     def append_log(self,data):
+        """
+        This persists the data and while it may be true that 
+        the logfile could be kept open indefinitely, for some reason
+        this causes dataloss when running multiprocess files.
+        """
+        self.log = open(self.filename, 'a')
         self.log.write(ujson.encode(data))
         self.log.write("\n")
+        self.log.close()
 
     def shutdown(self):
         self.log.close()
@@ -90,7 +93,7 @@ class Grafatality(object):
 
 def main():
     """ Useful only for testing the speed at which grafatality can write """
-    g = Grafatality('test.js')
+    g = Grafatality('test_lots.js')
     foo = {"something": "important", "for": ["a","r","r","a","y","s"]}
 
     # This should take no more than 2 seconds
