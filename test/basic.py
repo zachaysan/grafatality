@@ -72,4 +72,20 @@ class BasicTest(unittest.TestCase):
         other = Grafatality('test.js')
         self.assertTrue(other.graph['zach']['toronto']['stupid_key']['time_of_res'] == 3.5)
     
+    def test_removal_of_an_edge(self):
+        pass
     
+    def test_removal_of_an_edge_and_loading_it_again(self):
+        pass
+
+    def test_removal_of_a_node(self):
+        pass
+
+    def test_removal_of_a_node_and_loading_it_again(self):
+        pass
+
+    def test_node_typing(self):
+        pass
+
+    def test_retrival_of_nodes_of_a_certain_type(self):
+        pass
