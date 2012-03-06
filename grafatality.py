@@ -129,7 +129,9 @@ def main():
     g = Grafatality('test_lots.js')
     foo = {"something": "important", "for": ["a","r","r","a","y","s"]}
 
-    # This should take no more than 2 seconds
+    # This currently takes 20 seconds
+    # Ideally, it should take no more than 2 seconds since before validation
+    # it didn't
     for i in range(1000000):
         g.append_log(foo)
     g.shutdown()
