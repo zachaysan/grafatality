@@ -131,3 +131,6 @@ class BasicTest(unittest.TestCase):
         self.assertTrue('origin' in g.graph[('ak47','gun')][('russia','country')])
         self.assertTrue('painful' in g.graph[('ak47','gun')][('russia','country')]['origin'])
         self.assertTrue('yes' == g.graph[('ak47','gun')][('russia','country')]['origin']['painful'])
+
+    def test_all_sorts_of_things_for_types_like_int_float_etc(self):
+        pass
