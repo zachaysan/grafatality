@@ -38,11 +38,15 @@ is intended. Only edges and nodes added through self are persisted. This is
 sometimes useful.
 
 To add a node:
+
     self.g.add_node('zach')
 
 To add a typed node:
+
     self.g.add_node('zach', node_type='person')
+
 or:
+
     self.g.add_node(('zach', 'person'))
 
 In order to keep things sane, a node is its identifier and its type, together in a 
@@ -53,13 +57,17 @@ grafatality, this will not change. Though, there is no garuntee that 1.x.x will
 seperate the two.
 
 To add an edge:
+
     self.g.add_edge('zach', 'waterloo')
+
 Note that it automatically creates the nodes if not already on the graph.
 
 To add an edge of typed nodes with an edge "type" (called "key" to be consistent 
 with networkx) as well as edge attributes.
+
     self.g.add_edge(('ak47', 'gun'), ('russia','country'), key='origin', painful='yes')
 
 To add a typed node with attributes.
+
     self.g.add_node('zach', age=26)
 
